@@ -1,0 +1,11 @@
+## Interface: 16001
+## Title: Cheaper Buffs
+## Notes: Picks the highest rank of your class buffs that your target's level can receive.
+## Author: MendeleevForever
+## Version: 0.1.0
+## SavedVariables: CheaperBuffsDB
+
+Data.lua
+Logic.lua
+Core.lua
+Buttons.lua

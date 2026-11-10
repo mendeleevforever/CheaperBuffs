@@ -1,6 +1,6 @@
 # Cheaper Buffs
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Author:** MendeleevForever
 **Game:** World of Warcraft: Forever (interface 16001)
 
@@ -88,6 +88,21 @@ Click a button, or press a key you've bound to it. **One press casts one buff.**
 
 ---
 
+## Minimap button and options
+
+Cheaper Buffs puts a round button on the edge of your minimap. Click it to open the options window, and click it again (or press Escape) to close the window. Drag the button to move it around the minimap.
+
+| Option | What it does |
+|--------|--------------|
+| **Lock bar** | When ticked, the bar can't be dragged. |
+| **Hide bar** | When ticked, the bar is hidden. Untick it to bring the bar back. |
+| **Reset bar** | Moves the bar back to its starting spot and sets the scale to 100%. |
+| **Bar scale** | Drag the slider to make the bar smaller or bigger, from 50% to 200%. |
+
+The options window can be dragged too, and `/cbuffs options` opens it without the minimap button.
+
+---
+
 ## In combat
 
 The game locks addon buttons during combat, so **the buttons can't change rank while you're fighting**.
@@ -107,7 +122,9 @@ When you first install the addon, the bar is **unlocked**. The header has a blue
 1. Drag the blue header to wherever you like.
 2. Type `/cbuffs lock` to lock it in place. The blue strip disappears.
 
-You can't move the bar during combat. If you lose it off-screen, type `/cbuffs reset`.
+You can also lock it with the **Lock bar** box in the options window.
+
+You can't move, hide, or resize the bar during combat. If you change those options mid-fight, the window says the change will apply when combat ends, and it does. If you lose the bar off-screen, click **Reset bar** or type `/cbuffs reset`.
 
 ---
 
@@ -126,11 +143,13 @@ You can type `/cbuffs` or `/cheaperbuffs`.
 | Command | What it does |
 |---------|--------------|
 | `/cbuffs` | Show the list of commands |
+| `/cbuffs options` | Open or close the options window |
 | `/cbuffs lock` | Lock the bar so it can't be dragged |
 | `/cbuffs unlock` | Unlock the bar so you can drag it by the header |
 | `/cbuffs show` | Show the bar |
 | `/cbuffs hide` | Hide the bar |
-| `/cbuffs reset` | Move the bar back to its starting spot |
+| `/cbuffs reset` | Move the bar back to its starting spot and set the scale to 100% |
+| `/cbuffs minimap` | Hide or show the minimap button |
 | `/cbuffs mode id` | Cast by spell ID (the default) |
 | `/cbuffs mode name` | Cast by name and rank, like `Power Word: Fortitude(Rank 3)` |
 | `/cbuffs probe` | Print a report about your game client, for troubleshooting |
@@ -148,6 +167,9 @@ The game's interface number changed after this version was made. Tick **Load out
 **There's no bar.**
 - Your class might not be supported, or you might not have learned any of the listed buffs yet. For example, paladins get Blessing of Might at level 4.
 - You might have hidden it. Type `/cbuffs show`.
+
+**The minimap button is gone.**
+Type `/cbuffs minimap` to bring it back. Some minimap addons also collect or hide buttons, so check their settings too.
 
 **It cast the wrong rank.**
 Type `/cbuffs mode name` and try again. Some game builds handle lower ranks better when cast by name.
@@ -168,7 +190,7 @@ Type `/cbuffs probe` and include the output when you report the problem. The rep
 
 ## Known limits
 
-This is an early release (0.1.0). The addon was built and tested in a simulated game environment, not the real client. Please run `/cbuffs probe` once and report anything that looks off.
+This is an early release (0.2.0). The addon was built and tested in a simulated game environment, not the real client. Please run `/cbuffs probe` once and report anything that looks off.
 
 - **Spell data:** The spell IDs and trainer levels come from the original 1.12 game data. If Forever changed any of them, the probe will show it. They can be edited in `Data.lua`.
 - **Level rule:** The target-level rule (trainer level minus 10) comes from the original game and is being retested on Forever.
@@ -185,9 +207,24 @@ This is an early release (0.1.0). The addon was built and tested in a simulated 
 | `Data.lua` | The buff list: spell IDs and trainer levels for each rank |
 | `Logic.lua` | Works out which rank fits a given target level |
 | `Core.lua` | Saved settings, events, slash commands, and the probe report |
-| `Buttons.lua` | The bar, buttons, and tooltips |
+| `Buttons.lua` | The bar, buttons, tooltips, and bar settings |
+| `Options.lua` | The options window and the minimap button |
+| `Libs\` | Embedded libraries for the minimap button (see Credits) |
 | `Bindings.xml` | Adds the key binding entries |
 | `README.md` | This file |
+
+---
+
+## Credits
+
+The minimap button uses these libraries, included unchanged in the `Libs` folder from the LibDBIcon-1.0 v12.1.1 package:
+
+- **LibDBIcon-1.0** by Funkeh
+- **LibDataBroker-1.1**
+- **CallbackHandler-1.0**
+- **LibStub**
+
+Each library belongs to its own authors and keeps its own license.
 
 ---
 

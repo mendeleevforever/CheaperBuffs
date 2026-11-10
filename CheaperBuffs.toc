@@ -2,10 +2,17 @@
 ## Title: Cheaper Buffs
 ## Notes: Picks the highest rank of your class buffs that your target's level can receive.
 ## Author: MendeleevForever
-## Version: 0.1.0
+## Version: 0.2.0
+## IconTexture: 136222
 ## SavedVariables: CheaperBuffsDB
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
 
 Data.lua
 Logic.lua
 Core.lua
 Buttons.lua
+Options.lua

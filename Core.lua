@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-ns.version = "0.1.0"
+ns.version = "0.2.0"
 if C_AddOns and type(C_AddOns.GetAddOnMetadata) == "function" then
     ns.version = C_AddOns.GetAddOnMetadata(addonName, "Version") or ns.version
 end
@@ -15,10 +15,14 @@ end
 local DEFAULTS = {
     locked = false,
     shown = true,
+    scale = 1,
     mode = "id", -- "id" casts by spell ID; "name" casts "Name(Rank N)"
     point = { "CENTER", "UIParent", "CENTER", 0, -180 },
+    minimap = { hide = false }, -- LibDBIcon stores minimapPos here
     welcomed = false,
 }
+ns.DEFAULTS = DEFAULTS
+ns.SCALE_MIN, ns.SCALE_MAX, ns.SCALE_STEP = 0.5, 2.0, 0.05
 
 local function CopyValue(v)
     if type(v) ~= "table" then
@@ -30,6 +34,7 @@ local function CopyValue(v)
     end
     return t
 end
+ns.CopyValue = CopyValue
 
 function ns.Print(msg)
     print("|cff66ccffCheaper Buffs|r: " .. tostring(msg))
@@ -276,12 +281,20 @@ function handlers.ADDON_LOADED(name)
     if CheaperBuffsDB.mode ~= "id" and CheaperBuffsDB.mode ~= "name" then
         CheaperBuffsDB.mode = "id"
     end
+    local scale = CheaperBuffsDB.scale
+    if type(scale) ~= "number" or scale < ns.SCALE_MIN or scale > ns.SCALE_MAX then
+        CheaperBuffsDB.scale = 1
+    end
+    if type(CheaperBuffsDB.minimap) ~= "table" then
+        CheaperBuffsDB.minimap = { hide = false }
+    end
     ns.db = CheaperBuffsDB
     frame:UnregisterEvent("ADDON_LOADED")
 end
 
 function handlers.PLAYER_LOGIN()
     ns.db = ns.db or CopyValue(DEFAULTS)
+    ns.CreateMinimapButton() -- not a protected frame; safe even in combat
     ns.RunOutOfCombat("build", ns.Build)
 end
 
@@ -320,6 +333,9 @@ end
 function handlers.PLAYER_REGEN_ENABLED()
     FlushQueue()
     ns.Refresh()
+    if ns.RefreshOptions then
+        ns.RefreshOptions()
+    end
 end
 
 function handlers.PLAYER_REGEN_DISABLED()
@@ -423,9 +439,11 @@ end
 local function Help()
     local P = ns.Print
     P("v" .. ns.version .. " commands (/cbuffs or /cheaperbuffs):")
+    P("  options        - open the options window (same as clicking the minimap button)")
     P("  lock | unlock  - stop or allow dragging the bar by its header")
     P("  show | hide    - show or hide the bar")
-    P("  reset          - move the bar back to the default spot")
+    P("  reset          - move the bar back to the default spot and size")
+    P("  minimap        - show or hide the minimap button")
     P("  mode id | name - cast by spell ID (default) or by 'Name(Rank N)'")
     P("  probe          - check this addon's assumptions on your client build")
 end
@@ -438,25 +456,20 @@ SlashCmdList.CHEAPERBUFFS = function(msg)
         ns.Print("Not loaded yet.")
         return
     end
-    if cmd == "lock" or cmd == "unlock" then
-        ns.db.locked = (cmd == "lock")
-        if ns.SetLocked then
-            ns.SetLocked(ns.db.locked)
-        end
+    if cmd == "options" or cmd == "config" then
+        ns.ToggleOptions()
+    elseif cmd == "lock" or cmd == "unlock" then
+        ns.SetBarLocked(cmd == "lock")
         ns.Print(ns.db.locked and "Bar locked." or "Bar unlocked. Drag the header to move it.")
     elseif cmd == "show" or cmd == "hide" then
-        ns.db.shown = (cmd == "show")
-        if ns.built then
-            if not ns.RunOutOfCombat("layout", ns.Layout) then
-                ns.Print("In combat; the bar will change when combat ends.")
-            end
+        if not ns.SetBarShown(cmd == "show") then
+            ns.Print("In combat; the bar will change when combat ends.")
         end
     elseif cmd == "reset" then
-        ns.db.point = CopyValue(DEFAULTS.point)
-        if ns.built then
-            ns.RunOutOfCombat("position", ns.RestorePosition)
-        end
-        ns.Print("Position reset.")
+        ns.ResetBar()
+        ns.Print("Bar position and scale reset.")
+    elseif cmd == "minimap" then
+        ns.ToggleMinimapButton()
     elseif cmd == "mode" then
         if arg == "id" or arg == "name" then
             ns.db.mode = arg
@@ -471,5 +484,8 @@ SlashCmdList.CHEAPERBUFFS = function(msg)
         ns.Probe()
     else
         Help()
+    end
+    if ns.RefreshOptions then
+        ns.RefreshOptions()
     end
 end

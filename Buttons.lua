@@ -142,8 +142,23 @@ end
 
 function ns.RestorePosition()
     local p = ns.db.point
+    ns.bar:SetScale(ns.db.scale) -- scale first: point offsets are in the bar's scaled units
     ns.bar:ClearAllPoints()
     ns.bar:SetPoint(p[1], UIParent, p[3], p[4], p[5])
+end
+
+-- Change scale but keep the bar's centre where it is on screen.
+function ns.ApplyScale()
+    local bar = ns.bar
+    local old, new = bar:GetScale(), ns.db.scale
+    local cx, cy = bar:GetCenter()
+    bar:SetScale(new)
+    if cx and cy and old and old > 0 then
+        local x, y = cx * old / new, cy * old / new
+        bar:ClearAllPoints()
+        bar:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
+        ns.db.point = { "CENTER", "UIParent", "BOTTOMLEFT", x, y }
+    end
 end
 
 function ns.Layout()
@@ -186,12 +201,60 @@ function ns.Refresh()
     ns.RunOutOfCombat("apply", ns.ApplyAll)
 end
 
-function ns.SetLocked(locked)
+-------------------------------------------------------------------------------
+-- Settings. Used by the options window and the slash commands alike.
+-- Each returns true if the change happened now, false if it waits for
+-- combat to end.
+-------------------------------------------------------------------------------
+local function ApplyLock()
     if not ns.bar then
         return
     end
-    ns.bar.header:EnableMouse(not locked)
-    ns.bar.header.bg:SetShown(not locked)
+    -- The header is not protected, so this is safe in combat.
+    ns.bar.header:EnableMouse(not ns.db.locked)
+    ns.bar.header.bg:SetShown(not ns.db.locked)
+end
+
+function ns.SetBarLocked(locked)
+    ns.db.locked = locked and true or false
+    ApplyLock()
+    return true
+end
+
+function ns.SetBarShown(shown)
+    ns.db.shown = shown and true or false
+    if not ns.built then
+        return true
+    end
+    return ns.RunOutOfCombat("layout", ns.Layout)
+end
+
+-- Snap to the slider step and keep inside the allowed range.
+function ns.RoundScale(scale)
+    scale = math.floor(scale / ns.SCALE_STEP + 0.5) * ns.SCALE_STEP
+    if scale < ns.SCALE_MIN then
+        return ns.SCALE_MIN
+    elseif scale > ns.SCALE_MAX then
+        return ns.SCALE_MAX
+    end
+    return scale
+end
+
+function ns.SetBarScale(scale)
+    ns.db.scale = ns.RoundScale(scale)
+    if not ns.built then
+        return true
+    end
+    return ns.RunOutOfCombat("scale", ns.ApplyScale)
+end
+
+function ns.ResetBar()
+    ns.db.point = ns.CopyValue(ns.DEFAULTS.point)
+    ns.db.scale = ns.DEFAULTS.scale
+    if not ns.built then
+        return true
+    end
+    return ns.RunOutOfCombat("position", ns.RestorePosition)
 end
 
 -------------------------------------------------------------------------------
@@ -293,7 +356,7 @@ function ns.Build()
     ns.built = true
 
     ns.RestorePosition()
-    ns.SetLocked(ns.db.locked)
+    ApplyLock()
     ns.Layout()
     ns.ApplyAll()
 

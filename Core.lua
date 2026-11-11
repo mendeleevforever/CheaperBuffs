@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-ns.version = "0.3.0"
+ns.version = "1.0.0"
 if C_AddOns and type(C_AddOns.GetAddOnMetadata) == "function" then
     ns.version = C_AddOns.GetAddOnMetadata(addonName, "Version") or ns.version
 end

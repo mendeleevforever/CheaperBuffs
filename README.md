@@ -1,6 +1,6 @@
 # Cheaper Buffs
 
-**Version:** 0.3.0
+**Version:** 1.0.0
 **Author:** MendeleevForever
 **Game:** World of Warcraft: Forever (interface 16001)
 
@@ -191,7 +191,7 @@ Type `/cbuffs probe` and include the output when you report the problem. The rep
 
 ## Known limits
 
-This is an early release (0.3.0). The addon was built and tested in a simulated game environment, not the real client. Please run `/cbuffs probe` once and report anything that looks off.
+This release (1.0.0) was built and tested in a simulated game environment, not the real client. Please run `/cbuffs probe` once and report anything that looks off.
 
 - **Spell data:** The spell IDs and trainer levels come from the original 1.12 game data. If Forever changed any of them, the probe will show it. They can be edited in `Data.lua`.
 - **Level rule:** The target-level rule (trainer level minus 10) comes from the original game and is being retested on Forever.

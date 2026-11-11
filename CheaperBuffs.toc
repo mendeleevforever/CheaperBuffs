@@ -2,7 +2,7 @@
 ## Title: Cheaper Buffs
 ## Notes: Picks the highest rank of your class buffs that your target's level can receive.
 ## Author: MendeleevForever
-## Version: 0.2.0
+## Version: 0.3.0
 ## IconTexture: 136222
 ## SavedVariables: CheaperBuffsDB
 

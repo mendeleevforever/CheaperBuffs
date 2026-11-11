@@ -1,6 +1,6 @@
 # Cheaper Buffs
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Author:** MendeleevForever
 **Game:** World of Warcraft: Forever (interface 16001)
 
@@ -65,7 +65,7 @@ After you log in, a small bar appears near the middle of your screen. It has one
 
 - The **header** along the top shows who you're buffing. It reads `Target Lv 14`, `Self`, or `Target Lv ?`.
 - The **number** in the corner of each button is the rank it will cast. For example, `R3` means Rank 3.
-- **Hover** over a button to see the spell and why that rank was chosen.
+- **Hover** over a button to see the spell and why that rank was chosen. You can turn these tooltips off with **Hide bar tooltips** in the options window.
 
 ### Casting
 
@@ -96,6 +96,7 @@ Cheaper Buffs puts a round button on the edge of your minimap. Click it to open 
 |--------|--------------|
 | **Lock bar** | When ticked, the bar can't be dragged. |
 | **Hide bar** | When ticked, the bar is hidden. Untick it to bring the bar back. |
+| **Hide bar tooltips** | When ticked, hovering over the bar's buttons shows no tooltip. The rank number on each button still shows. |
 | **Reset bar** | Moves the bar back to its starting spot and sets the scale to 100%. |
 | **Bar scale** | Drag the slider to make the bar smaller or bigger, from 50% to 200%. |
 
@@ -190,7 +191,7 @@ Type `/cbuffs probe` and include the output when you report the problem. The rep
 
 ## Known limits
 
-This is an early release (0.2.0). The addon was built and tested in a simulated game environment, not the real client. Please run `/cbuffs probe` once and report anything that looks off.
+This is an early release (0.3.0). The addon was built and tested in a simulated game environment, not the real client. Please run `/cbuffs probe` once and report anything that looks off.
 
 - **Spell data:** The spell IDs and trainer levels come from the original 1.12 game data. If Forever changed any of them, the probe will show it. They can be edited in `Data.lua`.
 - **Level rule:** The target-level rule (trainer level minus 10) comes from the original game and is being retested on Forever.

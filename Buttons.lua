@@ -67,6 +67,9 @@ local function UpdateHeader(plans)
 end
 
 local function ShowTooltip(self)
+    if ns.db and ns.db.hideTooltips then
+        return
+    end
     local plan, buff = self.wanted, self.buff
     if not plan then
         return
@@ -218,6 +221,21 @@ end
 function ns.SetBarLocked(locked)
     ns.db.locked = locked and true or false
     ApplyLock()
+    return true
+end
+
+-- Tooltips are not protected, so this always applies at once, even in combat.
+function ns.SetHideTooltips(hide)
+    ns.db.hideTooltips = hide and true or false
+    if ns.db.hideTooltips and type(GameTooltip.GetOwner) == "function" then
+        local owner = GameTooltip:GetOwner()
+        for _, button in ipairs(ns.buttons) do
+            if owner == button then
+                GameTooltip:Hide()
+                break
+            end
+        end
+    end
     return true
 end
 

@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-ns.version = "0.2.0"
+ns.version = "0.3.0"
 if C_AddOns and type(C_AddOns.GetAddOnMetadata) == "function" then
     ns.version = C_AddOns.GetAddOnMetadata(addonName, "Version") or ns.version
 end
@@ -15,6 +15,7 @@ end
 local DEFAULTS = {
     locked = false,
     shown = true,
+    hideTooltips = false, -- true: no tooltip when hovering the bar's buttons
     scale = 1,
     mode = "id", -- "id" casts by spell ID; "name" casts "Name(Rank N)"
     point = { "CENTER", "UIParent", "CENTER", 0, -180 },
@@ -284,6 +285,9 @@ function handlers.ADDON_LOADED(name)
     local scale = CheaperBuffsDB.scale
     if type(scale) ~= "number" or scale < ns.SCALE_MIN or scale > ns.SCALE_MAX then
         CheaperBuffsDB.scale = 1
+    end
+    if type(CheaperBuffsDB.hideTooltips) ~= "boolean" then
+        CheaperBuffsDB.hideTooltips = false
     end
     if type(CheaperBuffsDB.minimap) ~= "table" then
         CheaperBuffsDB.minimap = { hide = false }
